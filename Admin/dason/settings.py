@@ -34,8 +34,17 @@ DEBUG = True
 ALLOWED_HOSTS = ['alpago071.onrender.com', 'localhost', '127.0.0.1']
 
 
+
+# Ruta de archivos estáticos
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Directorio donde Django buscará archivos estáticos
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+
+# Carpeta donde Django recopila todos los archivos estáticos en producción
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 
 # Application definition
