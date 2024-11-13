@@ -45,3 +45,4 @@ urlpatterns = [
     path("/", include("allauth_2fa.urls")),
     path("account/", include("allauth.urls")),
 ]
+

@@ -34,6 +34,13 @@ DEBUG = True
 ALLOWED_HOSTS = ['alpago071.onrender.com', 'localhost', '127.0.0.1']
 
 
+# Al final del archivo settings.py
+if not DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Ruta de archivos estáticos
 STATIC_URL = '/static/'
@@ -43,9 +50,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-# Carpeta donde Django recopila todos los archivos estáticos en producción
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-# Application definition
 
 DEFAULT_APPS = [
     "django.contrib.admin",
