@@ -46,7 +46,7 @@ DEFAULT_APPS = [
     "django.contrib.sites",
 ]
 LOCAL_APPS = [
-    "Admin.apps",
+    "apps.apps.AppsConfig",
     "components",
     "pages",
 ]
