@@ -45,8 +45,6 @@ STATICFILES_DIRS = [
 
 # Carpeta donde Django recopila todos los archivos estáticos en producción
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-
-
 # Application definition
 
 DEFAULT_APPS = [
