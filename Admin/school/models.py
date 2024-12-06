@@ -1,3 +1,83 @@
 from django.db import models
+from django.utils.html import format_html
 
-# Create your models here.
+class School(models.Model):
+    # Tipo de institución
+    INSTITUTION_TYPE_CHOICES = [
+        ('public', 'Pública'),
+        ('private', 'Privada'),
+        ('mixed', 'Mixta'),
+    ]
+    
+    # Nivel educativo
+    EDUCATION_LEVEL_CHOICES = [
+        ('preschool', 'Preescolar'),
+        ('primary', 'Primaria'),
+        ('secondary', 'Secundaria'),
+        ('high_school', 'Preparatoria'),
+        ('university', 'Universidad'),
+    ]
+    
+    # Modalidad educativa
+    EDUCATION_MODALITY_CHOICES = [
+        ('in_person', 'Presencial'),
+        ('online', 'En línea'),
+        ('hybrid', 'Híbrida'),
+    ]
+    
+    # Turnos
+    SHIFT_CHOICES = [
+        ('morning', 'Matutino'),
+        ('afternoon', 'Vespertino'),
+        ('night', 'Nocturno'),
+    ]
+    
+    # Campos del modelo
+    name = models.CharField(max_length=255, verbose_name="Nombre de la escuela")
+    street = models.CharField(max_length=255, verbose_name="Calle")
+    number = models.CharField(max_length=10, verbose_name="Número")
+    neighborhood = models.CharField(max_length=255, verbose_name="Colonia")
+    municipality = models.CharField(max_length=255, verbose_name="Municipio")
+    state = models.CharField(max_length=255, verbose_name="Estado")
+    postal_code = models.CharField(max_length=10, verbose_name="Código postal")
+    phone = models.CharField(max_length=15, verbose_name="Teléfono")
+    email = models.EmailField(verbose_name="Correo electrónico")
+    logo = models.ImageField(upload_to='school_logos/', verbose_name="Logotipo", null=True, blank=True)
+    website = models.URLField(verbose_name="Sitio web", null=True, blank=True)
+    established_date = models.DateField(verbose_name="Fecha de fundación", null=True, blank=True)
+    institution_type = models.CharField(
+        max_length=10, 
+        choices=INSTITUTION_TYPE_CHOICES, 
+        verbose_name="Tipo de institución",  
+        null=True  # Permitir valores nulos temporalmente
+    )
+    education_level = models.CharField(
+        max_length=15, 
+        choices=EDUCATION_LEVEL_CHOICES, 
+        verbose_name="Nivel educativo",
+        null=True  # Permitir valores nulos temporalmente
+    )
+    education_modality = models.CharField(
+        max_length=10, 
+        choices=EDUCATION_MODALITY_CHOICES, 
+        verbose_name="Modalidad educativa",
+        null=True  # Permitir valores nulos temporalmente
+    )
+    shifts = models.CharField(
+        max_length=10, 
+        choices=SHIFT_CHOICES, 
+        verbose_name="Turnos",  
+        null=True  # Permitir valores nulos temporalmente
+    )
+    active = models.BooleanField(default=True, verbose_name="¿Activo?")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Última actualización")
+
+    def __str__(self):
+        return self.name
+
+    def logo_preview(self):
+        if self.logo:
+            return format_html('<img src="{}" style="width: 50px; height: 50px;" />'.format(self.logo.url))
+        return "Sin logotipo"
+    logo_preview.short_description = "Vista previa del logotipo"

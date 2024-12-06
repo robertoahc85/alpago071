@@ -16,11 +16,6 @@ from pathlib import Path
 from django.conf import settings
 from django.contrib.messages import constants as messages
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Add the project root directory to Python path
-sys.path.append(str(BASE_DIR))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -33,22 +28,19 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['alpago071.onrender.com', 'localhost', '127.0.0.1']
 
+# Definir la ruta base
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Al final del archivo settings.py
-if not DEBUG:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-else:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-
-# Ruta de archivos estáticos
+# Archivos estáticos
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Render servirá archivos desde 'staticfiles' en producción
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Ruta de archivos estáticos personalizados
 
-# Directorio donde Django buscará archivos estáticos
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 
 DEFAULT_APPS = [
@@ -64,6 +56,7 @@ LOCAL_APPS = [
     "apps.apps.AppsConfig",
     "components",
     "pages",
+    'school',
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
