@@ -1,49 +1,22 @@
 from django.contrib import admin
 from .models import School
 from django.utils.html import format_html
-from django.utils.translation import gettext_lazy as _
-from django.forms import ModelForm
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
+from .forms import SchoolAdminForm
 
-# Formulario personalizado para validaciones avanzadas
-class SchoolForm(ModelForm):
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if email:
-            try:
-                validate_email(email)  # Utiliza el validador de Django
-            except ValidationError:
-                raise ValidationError("Por favor, ingresa un correo electrónico válido.")
-        return email
 
-    def clean_phone(self):
-        phone = self.cleaned_data.get('phone')
-        if phone and not phone.isdigit():
-            raise ValidationError("El número de teléfono solo debe contener dígitos.")
-        return phone
-
-    class Meta:
-        model = School
-        fields = '__all__'
-
-# Configuración avanzada del administrador
 @admin.register(School)
 class SchoolAdmin(admin.ModelAdmin):
-    form = SchoolForm
-
-    # Configuración de visualización
+    form = SchoolAdminForm
     list_display = (
-        'name', 'institution_type', 'education_level', 'education_modality', 
-        'shifts', 'phone', 'email', 'logo_preview', 'active', 'created_at'
+        'name', 'get_institution_type', 'get_education_level', 
+        'get_education_modality', 'get_shifts', 'phone', 'email', 
+        'logo_preview', 'active', 'created_at'
     )
     list_filter = ('institution_type', 'education_level', 'education_modality', 'shifts', 'active', 'state')
     search_fields = ('name', 'email', 'phone', 'street', 'neighborhood', 'municipality', 'state', 'postal_code')
     readonly_fields = ('created_at', 'updated_at', 'logo_preview')
     ordering = ('-created_at',)
 
-    # Organización en secciones
     fieldsets = (
         ("Información General", {
             'fields': ('name', 'institution_type', 'education_level', 'education_modality', 'shifts', 'active')
@@ -64,7 +37,7 @@ class SchoolAdmin(admin.ModelAdmin):
     )
 
     # Acciones personalizadas
-    actions = ['mark_as_active', 'mark_as_inactive', 'download_school_data']
+    actions = ['mark_as_active', 'mark_as_inactive']
 
     def mark_as_active(self, request, queryset):
         updated = queryset.update(active=True)
@@ -76,20 +49,26 @@ class SchoolAdmin(admin.ModelAdmin):
         self.message_user(request, f"{updated} escuela(s) marcadas como inactivas.")
     mark_as_inactive.short_description = "Marcar como inactivas"
 
-    def download_school_data(self, request, queryset):
-        # Simula la descarga de datos seleccionados
-        schools = queryset.values_list('name', 'email', 'phone', 'address')
-        with open('school_data.csv', 'w') as f:
-            f.write("Nombre,Correo,Teléfono,Dirección\n")
-            for school in schools:
-                f.write(",".join(school) + "\n")
-        self.message_user(request, "Datos exportados a 'school_data.csv'.")
-    download_school_data.short_description = "Exportar datos seleccionados a CSV"
+    # Métodos personalizados para mostrar valores multiselección
+    def get_institution_type(self, obj):
+        return ", ".join(obj.institution_type)
+    get_institution_type.short_description = "Tipo de institución"
 
-    # Métodos personalizados
+    def get_education_level(self, obj):
+        return ", ".join(obj.education_level)
+    get_education_level.short_description = "Nivel educativo"
+
+    def get_education_modality(self, obj):
+        return ", ".join(obj.education_modality)
+    get_education_modality.short_description = "Modalidad educativa"
+
+    def get_shifts(self, obj):
+        return ", ".join(obj.shifts)
+    get_shifts.short_description = "Turnos"
+
+    # Vista previa del logotipo
     def logo_preview(self, obj):
         if obj.logo:
             return format_html('<img src="{}" style="width: 50px; height: 50px;" />', obj.logo.url)
         return "Sin logotipo"
     logo_preview.short_description = "Vista previa del logotipo"
-
