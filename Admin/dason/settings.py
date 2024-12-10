@@ -57,6 +57,8 @@ LOCAL_APPS = [
     "components",
     "pages",
     'school',
+    'student',
+    'gestion',
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
